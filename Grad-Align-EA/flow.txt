@@ -1,0 +1,27 @@
+(default run case: not-preturbed, fb-tt)
+- prepare data:
+    - load source and target graph
+    - load alignment from source to target network
+    - read attributes of each node -> calculate cosine sim between 2 representations of attributes
+    -> final attribute is the transpose of cosine sim
+    - preprocessing: change label, alignment of the target network
+    - create indexed node pair
+
+- training:
+    - initialize model (GIN) with transposed graph attributes representation
+        number of layer: number of k-hop neighbour, determines in setting
+        number of hidden channels: determines in setting
+    - initialize seed list -> add new links to target network if doesnt match with source network
+    - calculate H (?)
+    - initialize edge's weight for both networks
+    - Loop:
+        - normalize attribute of both networks (1/sqrt(node_deg))
+        - check for number of remaining un-aligned nodes
+        - update the embedding
+            - calculate the distinctive loss (DAD)
+            - calculate layer-wise loss
+            - calculate embedding
+        - add seed:
+            - calculate similarity matrix
+            - node ranking and node selection
+        - add edge

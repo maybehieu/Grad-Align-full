@@ -2,6 +2,9 @@ import networkx as nx
 
 
 import torch_geometric.utils.convert as cv
+from scipy.io import loadmat
+from scipy.sparse import csr_matrix
+
 from torch_geometric.data import NeighborSampler as RawNeighborSampler
 
 import pandas as pd
@@ -24,12 +27,12 @@ Please note that some function codes are apopted and revised from
 https://github.com/vinhsuhi/GAlign
 https://github.com/deepopo/CENALP
 '''
-
+# load the graph dataset
 def na_dataloader(args):
-    
+    # non-human affected dataset
     if args.mode == 'not_perturbed': 
         # for douban dataset
-        G1, G2= loadG(args.data_folder, args.graphname)           
+        G1, G2= loadG(args.data_folder, args.graphname)         # create 2 graphs, add edge from csv
       
         if args.graphname == 'am-td': # will be revised later 
         

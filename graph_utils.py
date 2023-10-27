@@ -81,6 +81,9 @@ def load_gt(path, id2idx_src=None, id2idx_trg=None, format='matrix'):
     if id2idx_src:
         conversion_src = type(list(id2idx_src.keys())[0])
         conversion_trg = type(list(id2idx_trg.keys())[0])
+
+        print(conversion_src)
+        print(conversion_trg)
     if format == 'matrix':
         # Dense
         """

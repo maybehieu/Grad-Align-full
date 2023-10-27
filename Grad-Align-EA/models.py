@@ -5,7 +5,7 @@ from data import *
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_cluster import random_walk
+# from torch_cluster import random_walk
 from sklearn.linear_model import LogisticRegression
 
 import torch_geometric.transforms as T
@@ -91,8 +91,11 @@ class GradAlign:
             seed_list1 = []
             seed_list2 = []
         else:
+            # nodes inside source network that already been aligned
             seed_list1 = list(np.random.choice(list(self.alignment_dict.keys()), int(self.train_ratio * len(self.alignment_dict)), replace = False))
+            # nodes inside target network that already been aligned
             seed_list2 = [self.alignment_dict[seed_list1[x]] for x in range(len(seed_list1))]
+
             self.pre_seed_list1 = seed_list1
             self.pre_seed_list2 = seed_list2
             self.G1, self.G2 = seed_link(seed_list1, seed_list2, self.G1, self.G2)
@@ -111,11 +114,14 @@ class GradAlign:
 
         while True:
                 
-            self.attr_norm_s, self.attr_norm_t =self.normalized_attribute(self.G1, self.G2)
-            
+            self.attr_norm_s, self.attr_norm_t = self.normalized_attribute(self.G1, self.G2)
+
+            # get remaining un-aligned nodes from source network (?)
             index = list(set(index) - set(seed_list1))
+            # get remaining un-aligned nodes from target network (?)
             columns = list(set(columns) - set(seed_list2))
             seed_n_id_list = seed_list1 + seed_list2
+
             if len(columns) == 0 or len(index) == 0:
                 break
             if len(self.alignment_dict) == len(seed_list1):
@@ -259,7 +265,8 @@ class GradAlign:
                 sim_matrix[i * len(columns) + j, 2] = S_fin[self.idx1_dict[index[i]],self.idx2_dict[columns[j]]] 
         if len(seed_list1) != 0:
             print("Tversky sim calculation..")
-            sim_matrix2 = calculate_Tversky_coefficient(self.G1, self.G2, seed_list1, seed_list2, index, columns, alpha = self.alpha, beta = self.beta)
+            sim_matrix2 = calculate_Tversky_coefficient(self.G1, self.G2, seed_list1, seed_list2, index, columns,
+                                                        alpha = self.alpha, beta = self.beta)
             sim_matrix[:, 2] *= sim_matrix2[:, 2]
         else:
             sim_matrix2 = 1 # no effect
@@ -613,7 +620,8 @@ def calculate_Tversky_coefficient(G1, G2, seed_list1, seed_list2, index, columns
             if (G1_node, G2_node) not in Tversky_dict.keys():
                 Tversky_dict[G1_node, G2_node] = 0
             try:
-                Tversky_dict[G1_node, G2_node] += calculate_Tversky(adj.neighbors(G1_node), adj.neighbors(G2_node + shift + 1), alpha, beta)
+                Tversky_dict[G1_node, G2_node] += calculate_Tversky(adj.neighbors(G1_node), adj.neighbors(G2_node + shift + 1),
+                                                                    alpha, beta)
             except:
                 continue
     Tversky_dict = [[x[0][0], x[0][1], x[1]] for x in Tversky_dict.items()]

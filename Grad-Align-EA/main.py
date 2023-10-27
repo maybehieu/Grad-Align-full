@@ -31,9 +31,9 @@ def parse_args():
     Parses the arguments.
     '''
     parser = argparse.ArgumentParser(description="Run myProject.")
-    parser.add_argument('--attribute_folder', nargs='?', default='dataset/attribute/')
-    parser.add_argument('--data_folder', nargs='?', default='dataset/graph/')
-    parser.add_argument('--alignment_folder', nargs='?', default='dataset/alignment/',
+    parser.add_argument('--attribute_folder', nargs='?', default='../dataset/attribute/')
+    parser.add_argument('--data_folder', nargs='?', default='../dataset/graph/')
+    parser.add_argument('--alignment_folder', nargs='?', default='../dataset/alignment/',
                          help="Make sure the alignment numbering start from 0")
     parser.add_argument('--k_hop', nargs='?', default=2)  
     parser.add_argument('--hid_dim', nargs='?', default=150) 
@@ -51,7 +51,8 @@ args = parse_args()
 
 
 if __name__ == "__main__":
-        
+
+    # load data from dataset
     G1, G2, attr1, attr2, alignment_dict, alignment_dict_reversed, idx1_dict, idx2_dict = na_dataloader(args)
     GradAlign = GradAlign(G1, G2, attr1, attr2, args.k_hop, args.hid_dim, alignment_dict, alignment_dict_reversed, \
                                       args.train_ratio, idx1_dict, idx2_dict, alpha = G2.number_of_nodes() / G1.number_of_nodes(), beta = 1)    
